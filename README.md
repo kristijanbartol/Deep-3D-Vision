@@ -6,8 +6,8 @@ Semantic segmentation samples.
 
 To run sample Jupyter notebook, use `make` command (with `notebook` recipe).
 
-Note: root is running the notebook, but shouldn't care much in this scenario.
+*Note: root is running the notebook, but shouldn't care much in this scenario.*
 
-Example images:
+Sample collage:
 
-...
+![collage](semantic-segm/images/results/instance-segm.jpg)
