@@ -80,7 +80,7 @@ def apply_mask(image, mask, color, alpha=0.5):
     return image
 
 
-def display_instances(image, boxes, masks, class_ids, class_names,
+def visualize_instances(image, boxes, masks, class_ids, class_names,
                       scores=None, title="",
                       figsize=(16, 16), ax=None,
                       show_mask=True, show_bbox=True,
@@ -107,7 +107,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
     # If no axis is passed, create one and automatically call show()
     auto_show = False
     if not ax:
-        _, ax = plt.subplots(1, figsize=figsize)
+        fig, ax = plt.subplots(1, figsize=figsize)
         auto_show = True
 
     # Generate random colors
@@ -166,6 +166,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
     ax.imshow(masked_image.astype(np.uint8))
     if auto_show:
         plt.show()
+    return fig
 
 
 def display_differences(image,

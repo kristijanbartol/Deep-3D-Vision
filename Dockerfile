@@ -1,3 +1,5 @@
+# Dockerfile created from https://github.com/keras-team/keras/tree/master/docker.
+
 ARG cuda_version=9.0
 ARG cudnn_version=7
 FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
@@ -48,6 +50,7 @@ RUN conda install -y python=${python_version} && \
       opencv-python \
       six \
       imgaug \
+      pycocotools \
       librosa && \
     conda install \
       bcolz \
@@ -68,8 +71,6 @@ RUN conda install -y python=${python_version} && \
     conda clean -yt
 
 #ADD theanorc /home/keras/.theanorc
-
-RUN pip install pycocotools
 
 ENV PYTHONPATH='/keras/:$PYTHONPATH'
 
