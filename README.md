@@ -10,4 +10,4 @@ To run sample Jupyter notebook, use `make` command (with `notebook` recipe).
 
 Sample collage:
 
-![collage](semantic-segm/images/results/instance-segm.jpg)
+![collage](images/results/instance-segm.jpg)
