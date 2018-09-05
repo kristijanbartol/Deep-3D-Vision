@@ -1,6 +1,6 @@
 # Semantic segmentation
 
-Semantic segmentation samples using different pretrained models / datasets.
+Collection of semantic segmentation samples from current state-of-the-art models.
 
 ## Instance segmentation
 
@@ -13,3 +13,15 @@ To run sample Jupyter notebook, use `make` command (with `notebook` recipe).
 Sample collage:
 
 ![collage](images/results/instance-segm.jpg)
+
+## Class segmentation
+
+### 1. DeepLabV3 ([original](https://github.com/tensorflow/models/tree/master/research/deeplab))
+
+Test with arbitrary image: [test](https://colab.research.google.com/github/tensorflow/models/blob/master/research/deeplab/deeplab_demo.ipynb)
+
+Sample images:
+
+![deeplab1](vis1.png)
+![deeplab2](vis2.png)
+![deeplab3](vis3.png)
