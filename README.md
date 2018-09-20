@@ -1,3 +1,15 @@
+# Usage
+
+To run sample Jupyter notebook, use `make` command (with `notebook` recipe).
+
+*Note: root is running the notebook, but shouldn't care much in this scenario.*
+
+# Semantic segmentation + depth estimation
+
+A sample image of objects classified per instance with additional distance information:
+
+![segm_plus_dist](000175_10.png)
+
 # Semantic segmentation
 
 Collection of semantic segmentation samples from current state-of-the-art models.
@@ -5,10 +17,6 @@ Collection of semantic segmentation samples from current state-of-the-art models
 ## Instance segmentation
 
 ### 1. Mask RCNN - COCO dataset ([original](https://github.com/matterport/Mask_RCNN))
-
-To run sample Jupyter notebook, use `make` command (with `notebook` recipe).
-
-*Note: root is running the notebook, but shouldn't care much in this scenario.*
 
 Sample collage:
 
