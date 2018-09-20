@@ -8,7 +8,7 @@ To run sample Jupyter notebook, use `make` command (with `notebook` recipe).
 
 A sample image of objects classified per instance with additional distance information:
 
-![segm_plus_dist](000175_10.png)
+![joint_collage](joint_collage.png)
 
 # Semantic segmentation
 
