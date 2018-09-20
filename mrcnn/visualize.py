@@ -80,6 +80,26 @@ def apply_mask(image, mask, color, alpha=0.5):
     return image
 
 
+def calculate_distances(disp, rois, scene='outdoor'):
+    """
+    rois: [num_instance, (y1, x1, y2, x2)] in image coordinates.
+    
+    return rois: [num_instance, (y1, x1, y2, x2, dist)] in image coordinates.
+    """
+    MIN = 1
+    MAX = 50
+    
+    for idx, roi in enumerate(rois):
+        dist_sum = 0
+        y1, x1, y2, x2 = roi
+        for y in range(y1, y2):
+            for x in range(x1, x2):
+                dist_sum += disp[y][x]
+        rois[idx] = np.append(rois[idx], dist_sum / ((y2 - y1) * (x2 - x1)))
+        
+    return rois
+
+
 def visualize_instances(image, boxes, masks, class_ids, class_names,
                       scores=None, title="",
                       figsize=(16, 16), ax=None,
@@ -128,7 +148,7 @@ def visualize_instances(image, boxes, masks, class_ids, class_names,
         if not np.any(boxes[i]):
             # Skip this instance. Has no bbox. Likely lost in image cropping.
             continue
-        y1, x1, y2, x2 = boxes[i]
+        y1, x1, y2, x2, dist = boxes[i]
         if show_bbox:
             p = patches.Rectangle((x1, y1), x2 - x1, y2 - y1, linewidth=2,
                                 alpha=0.7, linestyle="dashed",
@@ -144,7 +164,9 @@ def visualize_instances(image, boxes, masks, class_ids, class_names,
             caption = "{} {:.3f}".format(label, score) if score else label
         else:
             caption = captions[i]
-        ax.text(x1, y1 + 8, caption,
+        new_caption = caption.split(' ')[0] + ' ' + str(dist)
+        print(new_caption)
+        ax.text(x1, y1 + 8, new_caption,
                 color='w', size=11, backgroundcolor="none")
 
         # Mask

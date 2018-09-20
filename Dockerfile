@@ -50,7 +50,6 @@ RUN conda install -y python=${python_version} && \
       opencv-python \
       six \
       imgaug \
-      pycocotools \
       librosa && \
     conda install \
       bcolz \
@@ -71,6 +70,8 @@ RUN conda install -y python=${python_version} && \
     conda clean -yt
 
 #ADD theanorc /home/keras/.theanorc
+
+RUN pip install pycocotools
 
 ENV PYTHONPATH='/keras/:$PYTHONPATH'
 
