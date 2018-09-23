@@ -18,5 +18,5 @@ echo "Generated mask path ($2): ../images/results/masks/$img_name/$2.jpg"
 echo "Result image path: $inpaint_path/examples/$img_name.png"
 
 python3 $inpaint_path/test.py --image $1 --mask ../images/results/masks/$img_name/$2.jpg \
-	--output $inpaint_path/examples/$img_name_$2.png --checkpoint_dir $inpaint_path/model_logs/release_imagenet_256
+	--output $inpaint_path/examples/${img_name}_$2.png --checkpoint_dir $inpaint_path/model_logs/release_imagenet_256
 

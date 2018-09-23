@@ -2,6 +2,7 @@ import sys
 import random
 import math
 import numpy as np
+import scipy.misc
 import skimage.io
 import matplotlib
 import matplotlib.pyplot as plt
@@ -78,70 +79,81 @@ class_names = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
 
 
 
+def select_object_and_inpaint(img_name, image):
+    # Run detection
+    results = model.detect([image], verbose=1)
+
+    # Visualize results
+    r = results[0]
+
+    ######
+    r = results[0]
+    rois = r['rois']
+    new_rois = np.zeros((rois.shape[0], rois.shape[1] + 1))
+    new_rois[:, :-1] = rois
+    ######
+
+    print(r['masks'][300][300])
+    print(new_rois.shape)
+
+    #fig, captions = visualize.visualize_instances(image, new_rois, r['masks'], r['class_ids'], 
+    #                           class_names, r['scores'])
+    captions = visualize.get_captions(new_rois, r['class_ids'], class_names, r['scores'])
+
+    visible_classes = [c.split(' ')[0] for c in captions]
+    print(visible_classes)
+
+    # We have pixel -> class/instance mapping, 
+    # but we also need class/instance -> pixel mapping.
+    class_names_with_indices = []
+    occurence_dict = dict()       # helper structure to count class occurences
+    class_dict = dict()
+    for c in visible_classes:
+        if c not in occurence_dict:
+            occurence_dict[c] = 0
+        occurence_dict[c] += 1
+        class_names_with_indices.append(c + str(occurence_dict[c]))
+        class_dict[c] = np.zeros((image.shape[0], image.shape[1]))                            # per-class dictionary
+        class_dict[class_names_with_indices[-1]] = np.zeros((image.shape[0], image.shape[1])) # per-instance dictionary
+
+    for height in range(image.shape[0]):
+        for width in range(image.shape[1]):
+            class_idx = -1
+            for idx, mask_element in enumerate(r['masks'][height][width]):
+                if mask_element:
+                    class_idx = idx
+            if class_idx != -1:
+                class_dict[class_names_with_indices[class_idx][:-1]][height][width] = 1.0  # per-class dictionary
+                class_dict[class_names_with_indices[class_idx]][height][width] = 1.0       # per-instance dictionary
+
+    MASKS_DIR = join(RESULTS_DIR, 'masks')
+    IMG_MASK_DIR = join(MASKS_DIR, img_name.split('.')[0])
+
+    if not exists(MASKS_DIR):
+        makedirs(MASKS_DIR)
+
+    if not exists(IMG_MASK_DIR):
+        makedirs(IMG_MASK_DIR)
+
+    for c in class_dict:
+        scipy.misc.imsave(join(IMG_MASK_DIR, '{}.jpg'.format(c)), class_dict[c])
 
 
 # Load an image from the images folder
 file_names = next(walk(IMAGE_DIR))[2]
 print(len(sys.argv))
-img_name = basename(sys.argv[1]) if len(sys.argv) == 2 else random.choice(file_names)
-print(img_name)
+
+if len(sys.argv) == 2:
+    if sys.argv[1] == 'all':
+        for f in file_names:
+            image = skimage.io.imread(join(IMAGE_DIR, f))
+            select_object_and_inpaint(f, image)
+        exit()
+    else:
+        img_name = basename(sys.argv[1])
+else:
+    img_name = random.choice(file_names)
+
 image = skimage.io.imread(join(IMAGE_DIR, img_name))
+select_object_and_inpaint(img_name, image)
 
-# Run detection
-results = model.detect([image], verbose=1)
-
-# Visualize results
-r = results[0]
-
-######
-r = results[0]
-rois = r['rois']
-new_rois = np.zeros((rois.shape[0], rois.shape[1] + 1))
-new_rois[:, :-1] = rois
-######
-
-print(r['masks'][300][300])
-print(new_rois.shape)
-
-#fig, captions = visualize.visualize_instances(image, new_rois, r['masks'], r['class_ids'], 
-#                           class_names, r['scores'])
-captions = visualize.get_captions(new_rois, r['class_ids'], class_names, r['scores'])
-
-visible_classes = [c.split(' ')[0] for c in captions]
-print(visible_classes)
-
-# We have pixel -> class/instance mapping, 
-# but we also need class/instance -> pixel mapping.
-class_names_with_indices = []
-occurence_dict = dict()       # helper structure to count class occurences
-class_dict = dict()
-for c in visible_classes:
-    if c not in occurence_dict:
-        occurence_dict[c] = 0
-    occurence_dict[c] += 1
-    class_names_with_indices.append(c + str(occurence_dict[c]))
-    class_dict[c] = np.zeros((image.shape[0], image.shape[1]))                            # per-class dictionary
-    class_dict[class_names_with_indices[-1]] = np.zeros((image.shape[0], image.shape[1])) # per-instance dictionary
-
-for height in range(image.shape[0]):
-    for width in range(image.shape[1]):
-        class_idx = -1
-        for idx, mask_element in enumerate(r['masks'][height][width]):
-            if mask_element:
-                class_idx = idx
-        if class_idx != -1:
-            class_dict[class_names_with_indices[class_idx][:-1]][height][width] = 1.0  # per-class dictionary
-            class_dict[class_names_with_indices[class_idx]][height][width] = 1.0       # per-instance dictionary
-
-MASKS_DIR = join(RESULTS_DIR, 'masks')
-IMG_MASK_DIR = join(MASKS_DIR, img_name.split('.')[0])
-
-if not exists(MASKS_DIR):
-    makedirs(MASKS_DIR)
-
-if not exists(IMG_MASK_DIR):
-    makedirs(IMG_MASK_DIR)
-
-import scipy.misc
-for c in class_dict:
-    scipy.misc.imsave(join(IMG_MASK_DIR, '{}.jpg'.format(c)), class_dict[c])
