@@ -1,6 +1,6 @@
 # About
 
-This is an early stage of a project. The idea is to build a complete 3D vision "engine" using pretrained models to show the power and simplicity of deep learning for prototyping. It goes along with Dockerfile and Bash scripts to glue the pipeline steps.
+This is an early stage of the project. The idea is to build a complete 3D vision "engine" using pretrained models to show the power and simplicity of deep learning for prototyping. It goes along with Dockerfile and Bash scripts to glue the pipeline steps.
 
 Afterwards, this "engine" can be used to play around with navigation and planning in 3D.
 
